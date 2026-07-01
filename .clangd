@@ -1,0 +1,12 @@
+CompileFlags:
+  Add: [
+    -std=c23,
+    -Wpedantic,
+    -Wall,
+    -Wextra,
+    -Wno-empty-translation-unit,
+    -I/opt/homebrew/include
+  ]
+
+Diagnostics:
+  UnusedIncludes: None
