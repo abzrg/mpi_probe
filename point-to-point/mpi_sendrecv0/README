@@ -1,0 +1,7 @@
+Demonstration of MPI_Sendrecv.
+
+Note that it performs send and receive opeartions at the same time as if there
+are two threads of execution one doing the send and the other the receive.
+
+MPI_PROC_NULL could be used to ignore one of the send or receive operations.
+(not sure if both can be ignored.)

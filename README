@@ -1,10 +1,13 @@
 A set of MPI examples
 ---------------------
 
-Order:
+basics:
+    - hello_world0
+    - hello_world1
+    - hello_world2
 
-- hello_world0
-- hello_world1
-- hello_world2
-- hello_world3
-- mpi_send0
+point-to-point communication:
+    - hello_world3
+    - mpi_send0
+    - mpi_getcount0
+    - mpi_sendrecv

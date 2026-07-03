@@ -1,0 +1,4 @@
+Demonstration of extracting information from receive status.
+
+In this case, we extracted the actual number of items being received, not the
+one that we specify at the call to `MPI_Recv`.
