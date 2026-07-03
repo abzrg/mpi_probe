@@ -1,0 +1,8 @@
+Demonstration of MPMD.
+
+As before, we can see the evidence of "multiple data" as each process has a
+copy of `rank` and `size`.
+
+The "multiple program" part comes from the fact that The `prog_rank_1` program
+(not the rank-1 process), is a different program than `prog_rank_2`. This is
+due to the `if`-statment that checks for rank of the processes.

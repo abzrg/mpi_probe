@@ -1,0 +1,11 @@
+A more involved Hello World example.
+
+Each processos own its copy of variables: `rank`, `size`
+
+Functions:
+
+    - MPI_Comm_rank(communicator, out_rank)
+        returns the current process ID
+    - MPI_Comm_size(communicator, out_size)
+        returns the total number of processors (not just of those that was
+        specified for this program only)

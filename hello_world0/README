@@ -1,0 +1,13 @@
+A hello world exmaple (not to be mistaken with the MPI Hello, World example)
+
+All processes/ranks run the same `printf` call.
+All processors, however, own their own copy of the address space.
+-> SPMD: single program, multiple data.
+
+Functions:
+    MPI_Init(&argc, &argv);
+        Initialize the mpi environment.
+        (TODO: what exactly happens here?)
+    MPI_Finalize();
+        Finalize or destroy the initialized MPI environment.
+        (TODO: what exactly happens here?)
