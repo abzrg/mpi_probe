@@ -5,8 +5,12 @@ CompileFlags:
     -Wall,
     -Wextra,
     -Wno-empty-translation-unit,
-    -I/opt/homebrew/include
+    # -I/opt/homebrew/include,
+    -I/opt/mpich/include
   ]
+
+Completion:
+  HeaderInsertion: Never
 
 Diagnostics:
   UnusedIncludes: None
