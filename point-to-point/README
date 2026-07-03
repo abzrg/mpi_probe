@@ -1,0 +1,83 @@
+Point-to-point Communication
+----------------------------
+
+Standard Mode
+    MPI_Send
+    MPI_Recv
+    MPI_Sendrecv
+    MPI_Sendrecv_c
+    MPI_Sendrecv_replace
+    MPI_Sendrecv_replace_c
+
+Buffered Mode
+    MPI_BSend
+    MPI_BRecv
+    ...
+
+Synchronous Mode
+    MPI_SSend
+    MPI_SRecv
+    ...
+
+Ready Mode
+    MPI_RSend
+    MPI_RRecv
+    ...
+
+
+data conversion
+    representation conversion
+        little endian -> big endian
+        hex floating point -> IEEE floating point
+    type conversion
+        real -> int
+
+communication modes
+    1. standard mode
+        - generally non-local
+            *locality* depends on the involvement of other processes for an
+            operation to complete. if it does not depend -> local; otherwise ->
+            non-local
+        - MPI_Send depends on another process to call a matching MPI_Recv, vice
+        - versa -> non-local
+
+    2. buffered (B)
+        > a buffered mode send operation can be started whether or not a
+          matching receive has been *started*. It may complete before a
+          matching receive is *started*.
+        > The sender copies the message into a buffer and then sends it with a
+          non-blocking send (using the same protocol as for standard send)
+        - local
+        - MPI_Bsend
+            a temporary buffer is allocated
+            copy content of send buffer into the temporary buffer
+                after the copy operation, the control immediately returns to
+                the caller and does not have to wait for a receive opeartion
+                requested by another process to complete.
+            => completion of a buffered send does not require other processes
+               doing something.
+
+    3. Synchronous (S)
+        > A send that uses a synchronous mode can be started whether or not a
+          matching receive was started. However, the send will complete
+          successfully only if a matching receive is *started*, and the receive
+          operation has started to receive the message sent by the synchronous
+          send.
+        > The sender sends a request-to-send message. The receiver stores this
+          request. When a matching receive is *started*, the receiver sends
+          back a permission-to-send message, and the sender now sends the
+          message.
+        - i.e., the send call only waits until a receiving call is started.
+        - non-local
+            because it depends on other processes to initiate a receive
+            operation
+
+    4. ready (R)
+        > A send that ... may be started *only* if the matching receive is
+          already started. Otherwise the operation is *erroneous* and its
+          outcome is undefined.
+        > The message is sent as soon as possible.
+        - non-local
+        - assumes the receive operation has already been called and is waiting
+          for the send operation.
+

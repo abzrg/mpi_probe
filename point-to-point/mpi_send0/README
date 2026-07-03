@@ -1,0 +1,11 @@
+Demonstration of point-to-point communication.
+
+This time though, instead of sending simply an integer, we're sending a string.
+
+Note that we can safely print the received message immediately after the call
+to `MPI_Recv`, and that, again, is because it is a blocking receive operation,
+meaning it stops the program execution at that point until it fully receives
+the data, and only then proceeds with the rest of the program. Therefore, by
+the time we get to the point where we call the `printf` function, the data is
+completely received, placed in the `msg` buffer, and it is safe to read the
+values in the receive buffer.

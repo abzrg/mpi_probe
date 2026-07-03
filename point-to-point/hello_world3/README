@@ -1,9 +1,28 @@
 Demonstration of point-to-point communication between two processors.
 
 This program uses `MPI_Send` and `MPI_Recv` to send an integer value from
-process-0 to process-1. These two function perform "blocking" send and receive,
-respectively, that is, the program halts further executtion until the send or
-the recv operation is done.
+process-0 to process-1.
+
+These two function perform "blocking" send and receive, respectively, that is,
+the program halts further executtion until the send or the recv operation is
+done. In other words, a call to these functions does not return control back to
+the caller until the operation is done. It would be unsafe if it returned
+immediately, because, for instance, we wouldn't know whether it's safe to read
+the receive buffer or write to the send buffer.
+
+> One can think of message transfer as consisting of the following phases:
+    1. Data is pulled out of the send buffer and a message is assembled.
+    2. A message is transferred from sender to receiver.
+    3. Data is pulled from the incoming messge and disassembled into the
+       receive buffer.
+
+NOTE
+    A call to `MPI_Send` must be accompanied by a call to `MPI_Recv`; otherwise
+    a deadlock may occur.
+
+NOTE
+    When sending and receiving, the send and receive data types of the message
+    that is being transferred must match.
 
 NOTE
     There are also two variants of send and recv: `MPI_Send_c` and
@@ -12,7 +31,12 @@ NOTE
     available in OpenMPI; MPICH is an implementation that does provide them.
 
 MPI_Recv allows wildcard values: MPI_ANY_SOURCE, and MPI_ANY_TAG, to accept any
-source and any tag.
+source and any tag. This is useful if you care neither about the tag nor the
+source.
 
-We could inspect the status of receive operation using status object. There functions:
-- MPI_Get_count(status, datatype, count) - number of received entries
+We could inspect the status of receive operation using status object. This is
+particularly useful if we use the above wildcards.
+
+    recv_status.error
+    recv_status.source
+    recv_status.tag
