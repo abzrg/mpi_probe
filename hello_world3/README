@@ -1,0 +1,18 @@
+Demonstration of point-to-point communication between two processors.
+
+This program uses `MPI_Send` and `MPI_Recv` to send an integer value from
+process-0 to process-1. These two function perform "blocking" send and receive,
+respectively, that is, the program halts further executtion until the send or
+the recv operation is done.
+
+NOTE
+    There are also two variants of send and recv: `MPI_Send_c` and
+    `MPI_Recv_c`. These functions accept the message count as MPI_Count rather
+    than int. MPI_Count simply has a bigger range than int. These variants are
+    available in OpenMPI; MPICH is an implementation that does provide them.
+
+MPI_Recv allows wildcard values: MPI_ANY_SOURCE, and MPI_ANY_TAG, to accept any
+source and any tag.
+
+We could inspect the status of receive operation using status object. There functions:
+- MPI_Get_count(status, datatype, count) - number of received entries
