@@ -1,0 +1,26 @@
+Demonstration of MPI_Probe
+--------------------------
+
+MPI_Probe obtains information about a message waiting for reception, without
+actually receiving it. In other words, the message probed remains waiting for
+reception afterwards. This approach allows for instance to receive messages of
+unknown length by probing them to get their length first. If there is no
+message from the given source with the given tag waiting for reception,
+MPI_Probe will block until such a message arrives.
+
+    int MPI_Probe(int source,
+                  int tag,
+                  MPI_Comm communicator,
+                  MPI_Status* status);
+
+MPI_Probe blocks until a matching message exists, then fills in the MPI_Status
+object with information such as source and tag. The message remains available
+for a later receive call, and the later MPI_Recv should match that message if
+no intervening receive takes it first.
+
+The probe is not a data transfer; it is a query about a message that has
+already been sent or is in flight.
+
+MPI_Probe does not consume the message, and it does not replace the send. It
+only peeks at a matching incoming message so the receiver can inspect its
+status and size before calling MPI_Recv.

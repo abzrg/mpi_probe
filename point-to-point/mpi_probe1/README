@@ -1,0 +1,29 @@
+Demonstration of MPI_IProbe
+---------------------------
+
+MPI_Iprobe is the non-blocking version of MPI_Probe. Unlike classic
+non-blocking operations, this routine does not work with an MPI_Request.
+Instead, it tells whether a message corresponding to the filters passed is
+waiting for reception or not, via a flag that it sets. If no such message has
+arrived yet, it does not wait like MPI_Probe, instead it sets the flag to false
+and returns. Otherwise, it sets the flag to true as well as setting the status.
+
+    int MPI_Iprobe(int source,
+                   int tag,
+                   MPI_Comm communicator,
+                   int* flag,
+                   MPI_Status* status);
+
+When to use MPI_Probe and MPI_Iprobe
+
+    Use MPI_Probe when you want to pause until a message is ready and then
+    immediately inspect it, often to learn its size before receiving it. Use
+    MPI_Iprobe when your code has other work to do and you want to periodically
+    check for incoming messages without stopping the program.
+
+    A loop around MPI_Iprobe can behave a lot like MPI_Probe, but the standard
+    blocking call is usually the cleaner choice when you truly want to wait. If
+    you need overlap between computation and communication, MPI_Iprobe is the
+    more natural option.
+
+        src: https://stackoverflow.com/questions/43823458/mpi-iprobe-vs-mpi-probe

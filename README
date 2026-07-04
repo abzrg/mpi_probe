@@ -14,3 +14,9 @@ point-to-point communication:
     - mpi_buffer0
     - mpi_buffer1
     - mpi_buffer2
+    - mpi_isend0
+    - mpi_ringtopo
+    - mpi_probe0
+    - mpi_probe1
+    - mpi_persistent0
+    - mpi_persistent1

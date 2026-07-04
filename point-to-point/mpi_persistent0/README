@@ -1,0 +1,36 @@
+Demonstration of Persistent Communication
+-----------------------------------------
+
+Persistent communication in MPI is a way to set up a send or receive once and
+reuse it many times with the same arguments (for instance when the buffer is
+the same, but it keeps changing). It is useful when the same communication
+pattern repeats in a loop, because it reduces setup overhead compared with
+creating a new nonblocking request every iteration.
+
+In MPI, you first create a persistent request with an _init routine such as
+MPI_Send_init or MPI_Recv_init, then start it with MPI_Start or MPI_Startall,
+wait for completion with MPI_Wait, and finally free it with MPI_Request_free
+when you are done. The actual message data is not stored in the request; the
+request stores the communication parameters so they can be reused.
+
+    NOTE:
+        MPI_Start only initiates the persistent communication; it does not mean
+        the transfer is finished. You need MPI_Wait or MPI_Test to ensure the
+        operation completes before you reuse the request or touch the buffers
+        again.
+
+        The key reason is safety: after MPI_Start, the send buffer must stay
+        unchanged, and the receive buffer must not be read, until completion.
+        MPI_Wait marks the request inactive again, which makes it legal to
+        start it another time.
+
+Persistent communication is best for repeated point-to-point exchanges where
+the source, destination, datatype, count, tag, and communicator stay the same
+across iterations. It does not automatically make communication faster on the
+network itself, but it can reduce repeated setup cost in the MPI library.
+
+> a persistent communication request is *inactive* after it was created --- no
+> active communication is attached to the request.
+
+> A communication that uses a *persistent communication request* is *started*
+> by the function MPI_START.
