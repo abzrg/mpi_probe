@@ -11,3 +11,6 @@ point-to-point communication:
     - mpi_send0
     - mpi_getcount0
     - mpi_sendrecv
+    - mpi_buffer0
+    - mpi_buffer1
+    - mpi_buffer2

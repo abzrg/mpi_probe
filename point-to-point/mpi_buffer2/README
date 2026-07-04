@@ -1,0 +1,62 @@
+Demonstration of buffer allocation and overhead.
+
+
+In this context, overhead means the extra cost beyond the actual message data.
+For MPI buffered sends, that extra cost is the bookkeeping space the MPI
+library may need to store and manage each message in the user-provided buffer.
+
+So if your message payload is the actual data you want to send, the overhead is
+the additional bytes needed so MPI can pack, track, and later deliver that
+message safely. The MPI docs describe MPI_BSEND_OVERHEAD as the maximum amount
+of buffer space that MPI_Bsend may use per message.
+
+    src: https://docs.open-mpi.org/en/v5.0.1/man-openmpi/man3/MPI_Buffer_attach.3.html
+
+pack_size is the space for the actual integers, and MPI_BSEND_OVERHEAD is the
+extra space MPI may need for one buffered send. If you had two buffered sends
+outstanding, you would need to add the overhead twice
+
+
+MPI_Pack_size vs 4*sizeof(int)
+
+    4*sizeof(int) is only the raw storage for four integers in memory.
+    MPI_Pack_size gives the amount of space MPI says is needed to pack that
+    data for sending with the chosen datatype and communicator.
+
+    For simple contiguous built-in types like MPI_INT,
+
+        MPI_Pack_size(4, MPI_INT, comm, &pack_size)
+
+    is often close to
+
+        4*sizeof(int)
+
+    but it is still the portable choice because MPI is allowed to represent
+    packed data in a way that is not identical to your in-memory layout. It
+    also matters more for derived datatypes, heterogeneous systems, or anything
+    that is not a plain contiguous block of bytes.
+
+
+If you omit MPI_BSEND_OVERHEAD
+
+    If you forget to include MPI_BSEND_OVERHEAD, your attached buffer may be
+    too small, and MPI_Bsend can fail with a buffer-related error such as
+    MPI_ERR_BUFFER. In practice, that means MPI may not be able to queue the
+    message in the user buffer, even though the payload itself would fit.
+
+    A good rule is:
+
+        buffer_size = pack_size + MPI_BSEND_OVERHEAD;
+
+    and if you plan to have multiple buffered sends outstanding, add that
+    overhead for each one.
+
+
+Practical note
+
+    For many programs, buffered send is not the best default choice. The MPI
+    docs and user discussions often recommend standard blocking sends or
+    nonblocking sends instead, because buffered mode makes it easy to
+    under-allocate and hard to predict how much space you really need.
+
+        src: https://stackoverflow.com/a/44087662

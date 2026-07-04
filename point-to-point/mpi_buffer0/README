@@ -1,0 +1,22 @@
+Demonstration of Buffered send operation.
+
+For that we need to allocate a buffer. The buffer can be allocated per group,
+per session, and per process. Here we use `MPI_Buffer_attach` to allocate
+memory. Later on we can get detach the buffer and get the handle/ptr to the
+allocated memory, along with its size back.
+
+    MPI_BUFFER_DETACH(buffer_addr, size)
+        - OUT buffer addr initial buffer address (choice)
+        - OUT size buffer size, in bytes (integer)
+
+    > Detach the MPI process-specific buffer buffer currently attached to MPI
+
+    NOTE:
+        the buffer space is not available for reuse by subsequent `MPI_Bsend`s
+        unless you are certain that the message has been received (not just
+        that it should have been received).
+
+    NOTE:
+        MPI_BSEND_OVERHEAD:
+            Add this to the size of a MPI_BSEND buffer for each outstanding
+            message.
