@@ -1,0 +1,23 @@
+Demonstration of persistent communication in a loop.
+
+Unlike previous example, here we have multiple request, each of which
+sending/receiving a portion of a 2D array.
+
+NOTE: As before we can start the operation with a call to *_start functions,
+      but this time in a loop. instead of waiting for them one by one with
+      MPI_Wait, we call MPI_Waitall once.
+
+        MPI_Waitall(req_count, &req, &status);
+
+      NOTE: when using MPI_Waitall, use MPI_STATUS*ES*_IGNORE, instead of
+            MPI_STATUS_IGNORE
+
+NOTE: when passing array of buffers and requests, make sure to pass the right
+      pointer to send and receive initialization functions.
+
+          buffers[][]
+          requests[]
+
+          MPI_Send_init(&buffers[i], ..., &requests[i])
+          MPI_Request_free(requests)
+

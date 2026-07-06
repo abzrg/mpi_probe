@@ -20,3 +20,5 @@ point-to-point communication:
     - mpi_probe1
     - mpi_persistent0
     - mpi_persistent1
+    - mpi_persistent2
+    - mpi_persistent3

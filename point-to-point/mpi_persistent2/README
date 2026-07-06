@@ -1,0 +1,13 @@
+Demonstration of persistent communication in a loop.
+
+This program shows how with one single request we can send/receive an array of
+numbers.
+
+Persistent communication actually shows how all MPI send/receive operations are
+done. They are done in 4 steps:
+
+    1. initialization             -> MPI_Send_start(..., &request)
+                                     MPI_Recv_init(..., &request)
+    2. send/recv                  -> MPI_Start(&request)
+    3. confirmation of completion -> MPI_Wait(&request, &status)
+    4. freeing resources          -> MPI_Request_free(&request);
