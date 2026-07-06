@@ -1,0 +1,6 @@
+Demonstration of contiguous datatype
+
+This program sends 3 contiguous integers as one logical datatype.
+
+NOTE: Think of oldtype as a building block and newtype as a longer block made
+      by stacking that building block several times in a row.

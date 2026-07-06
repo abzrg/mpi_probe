@@ -26,3 +26,8 @@ point-to-point communication:
 partitioned communication:
     - mpi_partitioned0
     - mpi_partitioned1
+
+datatypes
+    - predefined_datatypes
+    - contiguous_ints
+    - contiguous_struct

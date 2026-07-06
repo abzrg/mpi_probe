@@ -1,0 +1,54 @@
+Demonstration of contiguous datatype
+
+What is a block?
+
+    In this MPI code, a block means one consecutive chunk of elements inside a
+    derived datatype. In MPI_Type_create_struct, each block is one field group;
+
+        typedef struct {
+            double value; <- a block
+            char label;   <- a block
+        } sample_t;
+
+    Another example:
+
+    typedef struct {
+        int x;              <- a block (length = 1)
+        int y;              <- a block (length = 1)
+    } point_t;
+
+    typedef struct {
+        char name[8];       <- a block (length = 8)
+        point_t position;   <- a block (length = 1)
+        double weight;      <- a block (length = 1)
+    } particle_t;
+
+
+    // Creating MPI point type
+
+        size_t point_field_count = 2;
+        int point_block_lengths[point_field_count] = {1, 1};
+        MPI_Aint point_displacements[point_field_count] = {
+            offsetof(point_t, x),  // #include <stddef.h>
+            offsetof(point_t, y)
+        };
+        MPI_Datatype types[point_field_count] = {MPI_INT, MPI_INT};
+
+        MPI_Datatype point_type;
+        MPI_Type_create_struct(point_field_count, point_block_lengths, point_displacements, types, &point_type);
+        MPI_Type_commit(&point_type);
+
+    // Create MPI particle type
+
+        size_t particle_field_count = 3;
+        int particle_block_lengths[particle_field_count] = {8, 1, 1};
+        MPI_Aint particle_displacements[particle_field_count] = {
+            offsetof(particle_t, name),
+            offsetof(particle_t, position),
+            offsetof(particle_t, weight)
+        };
+        MPI_Datatype types[particle_field_count] = {MPI_CHAR, point_type, MPI_DOUBLE};
+
+        MPI_Datatype particle_type;
+        MPI_Type_create_struct(particle_field_count, particle_block_lengths, particle_displacements, types, &particle_type);
+        MPI_Type_commit(&particle_type);

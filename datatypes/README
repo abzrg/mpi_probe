@@ -1,0 +1,144 @@
+                                   DATA-TYPES
+                                   ----------
+
+Goal
+
+    describe any data layout
+
+Data
+    - contiguous data
+    - non-contiguous data
+
+
+Predefined data types
+
+    MPI_INT, MPI_CHAR, MPI_DOUBLE, ...
+
+
+General datatype
+
+    > A *general datatype* is an opaque object that specifies two things
+      - a sequence of basic datatypes.
+      - a sequence of integer (byte) displacements
+
+      The displacements are not required to be positive, distinct, or in
+      increasing order. Therefore, the order of items need not coincide with
+      their order in store, and an item may appear more than once. We call such
+      a pair of sequences (or sequence of pairs) a type map. The sequence of
+      basic datatypes (displacements ignored) is the type signature of the
+      datatype.
+
+          Typemap = { (type_0, disp_0), ..., (type_{n-1}, disp_{n-1})}
+
+          Typesig = { (type_0), ..., (type_{n-1})}
+
+      this typemap, together with a base adress buf, specifies a communication
+      buffer: the communication buffer that consists of n entries, where the
+      i-th entry is at address buf+disp_i and has type type_i. A message
+      assembled from such a communication buffer will consists of n values, of
+      the types defined by Typesig.
+
+    > Allowed values are nonnegative integers. If the value is zero,
+      no elements are generated in the type map and there is no effect on
+      datatype bounds or extent.
+
+    > The basic datatypes ... are particular cases of a general datatype, and
+      are predefined. Thus, MPI_INT is a predefined handle to a datatype with
+      type map { ( int, 0) }, with one entry of type int and displacement zero.
+      The other basic datatypes are similar.
+
+    > The *extent* of a datatype is defined to be the span from the first byte
+      to the last byte occupied by entries in this datatype, rounded up to
+      satisfy alignment requirements (via a padding of \epsilon).
+
+      If
+
+          Typemap = { ( type0, disp0), ... , ( typen-1, dispn-1) } ,
+
+      then
+
+              lb(Typemap) = min_j (disp_j)
+              ub(Typemap) = max_j (disp_j + sizeof(type_j)) + \epsilon
+          extent(Typemap) = ub(Typemap) - lb(Typemap)
+
+
+      Example: Assume that Type = { (double, 0), (char, 8) }
+          (a double at displacement zero, followed by a char at displacement
+          eight). Assume, furthermore, that doubles have to be strictly aligned
+          at addresses that are multiples of eight. Then, the extent of this
+          datatype is 16 (9 (8+1) rounded to the next multiple of 8). A
+          datatype that consists of a character immediately followed by a
+          double will also have an extent of 16 (1+8=9 -> 16).
+
+
+    Type constructors with explicit addresses
+
+        > For the large count versions of three datatype constructors with
+          explicit addresses, MPI_TYPE_CREATE_HINDEXED,
+          MPI_TYPE_CREATE_HINDEXED_BLOCK, and MPI_TYPE_CREATE_STRUCT, absolute
+          addresses shall not be used to specify byte displacements since the
+          parameter is of type MPI_COUNT instead of type MPI_AINT.
+
+
+    Datatype constructors
+
+        > Contiguous.
+
+          The simplest datatype constructor is MPI_TYPE_CONTIGUOUS, which
+          allows replication of a datatype into contiguous locations.
+
+          i.e. it represents several copies of an existing datatype laid out
+               back-to-back in memory.
+
+
+              int MPI_Type_contiguous(int count, MPI_Datatype oldtype,
+                                      MPI_Datatype *newtype)
+
+              int MPI_Type_contiguous_c(MPI_Count count, MPI_Datatype oldtype,
+                                        MPI_Datatype *newtype)
+
+                    count: replication count (nonnegative integer)
+                    oldtype: old datatype (handle)
+                    newtype: new datatype (handle) (out)
+
+
+              NOTE:
+                  - oldtype is the datatype you already have, such as MPI_INT,
+                    MPI_DOUBLE, or another derived datatype.
+                  - newtype is the datatype created from it, representing count
+                    contiguous copies of oldtype.
+
+                  So if oldtype = MPI_INT and count = 4, then newtype behaves
+                  like "4 consecutive integers."
+
+
+          NOTE: Why it is useful (AI)
+
+             Contiguous datatypes let you describe a block of data once and
+             then send or receive it as a single MPI object. That is cleaner
+             than manually sending several elements or writing loops of
+             separate messages.
+
+          Example:
+              Let oldtype have type map { ( double, 0), ( char, 8) }, with
+              extent 16, and let count = 3.
+
+              The type map of the datatype returned by newtype is
+
+              {
+                (double, 0),  (char, 8),
+                (double, 16), (char, 24),
+                (double, 32), (char, 40)
+              };
+
+              i.e., alternating double and char elements, with displacements 0,
+              8, 16, 24, 32, 40.
+
+
+           NOTE: After you create a type you need to commit it using
+                 MPI_Type_commit(...) before you use it.
+
+
+        > Vector.
+
+

@@ -1,0 +1,16 @@
+Demonstration of basic predefined datatypes
+
+In this case MPI_INT. But there are others
+
+    MPI_CHAR,
+    MPI_FLOAT, MPI_DOUBLE
+
+There are also
+
+    MPI_INT8_T, MPI_INT16_T, MPI_INT32_T, MPI_64_T (similar to stdint.h)
+    MPI_REAL, MPI_REAL2, MPI_REAL4, MPI_REAL8, MPI_REAL16
+
+and some more ...
+
+Note that these are not the actual types, they are simply macros that
+differentiate types.
