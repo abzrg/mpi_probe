@@ -1,0 +1,8 @@
+Demonstration of partitioned communication
+
+Note that in this example, the four partitions, 0 to 3, constitute a single
+message.
+
+Also note that we check for the completion of all partitions at once via wait
+or test (if we want to occasionally check and do some work in between)
+functions.

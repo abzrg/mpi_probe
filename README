@@ -22,3 +22,7 @@ point-to-point communication:
     - mpi_persistent1
     - mpi_persistent2
     - mpi_persistent3
+
+partitioned communication:
+    - mpi_partitioned0
+    - mpi_partitioned1

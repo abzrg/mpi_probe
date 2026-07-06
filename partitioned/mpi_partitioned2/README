@@ -1,0 +1,5 @@
+Demonstration of partitioned communication
+
+This program is the same as the mpi_partitioned1, except that we have different
+partition count and different partition buffer sizes on the send and receive
+side.

@@ -1,0 +1,169 @@
+Partitioned Communication
+-------------------------
+
+INTRO
+
+    > Partitioned communication extends persistent point-to-point communication ...
+
+    > Partitioned communication is ``partitioned'' because it allows for
+      multiple contributions of data to be made, potentially, from multiple
+      actors (e.g., threads or tasks) in an MPI process to a single
+      communication operation.
+
+    > Partitioned communication operations use a persistent communication style
+      that involves a sequence of start and test or wait operations. For this
+      sequence, partitioned communications use MPI_START or MPI_STARTALL calls
+      and completion mechanisms (e.g., MPI_TEST or MPI_WAIT). Partitioned
+      communication is different in three fundamental ways from persistent
+      point-to-point operations in MPI. First, partitioned communication allows
+      additional partitioned test function calls that can expose partial
+      completion of the operation. Second, partitioned communication may
+      perform all of the initialization required to enable data transfer as
+      early as its initialization phase. Third, partitioned communication
+      allows for MPI to be independently notified of multiple contributions
+      from the send-side to a single data buffer of a single MPI message.
+
+    > Rationale.
+      The rationale behind having different initialization behavior allowed for
+      partitioned communication as opposed to persistent point-to-point
+      communication is to enable flexibility and optimization possibilities in
+      implementations.
+
+
+SEMANTICS
+
+    > Persistent communications use opaque MPI_REQUEST objects...
+
+    > ... they provide `MPI_Psend_init` and `MPI_Precv_init`
+
+    > Partitioned communication initialization functions are local.
+
+    The number of paritions on the send side may differ from that on the
+    receive side.
+
+    > Valid part. comm.s must have one or more partitions specified.
+
+    > Once an MPI_PSEND_INIT call has been made, the user may start the
+      operation with a call to a starting procedure and complete the operation
+      with one MPI_PREADY call for every send partition followed by a call to a
+      completing procedure. A call to MPI_PREADY notifies the MPI library that
+      a specified portion of the data buffer (a specific partition) is ready to
+      be sent. Notification of partial completion can be done via fine-grained
+      MPI_PARRIVED calls at the receiver before a final MPI_TEST/MPI_WAIT on
+      the request itself; the latter represents overall operation completion
+      upon success.
+
+
+INIT AND SEND
+
+    int MPI_Psend_init(const void *buf, int partitions, MPI_Count count,
+                       MPI_Datatype datatype, int dest, int tag, MPI_Comm comm,
+                       MPI_Info info, MPI_Request *request)
+
+        > Matching follows the same MPI matching rules as for point-to-point
+          communication with communicator, tag, and source dictating message
+          matching.
+
+        > In the event that the communicator, tag, and source do not uniquely
+          identify a message, the order in which partitioned communication
+          initialization calls are made is the order in which they will
+          eventually match.
+
+        NOTE: a call to MPI_PSEND_INIT can only be matched by a similar call to
+              MPI_PRECV_INIT. This is in contrary to persistent communication
+              where the matching call could be a simple blocking or
+              non-blocking receive.
+
+        > Send side and receive side buffers must be identical in size (not
+          necessarily the same parition number or the same partition size).
+
+
+    int MPI_Precv_init(void *buf, int partitions, MPI_Count count,
+                       MPI_Datatype datatype, int source, int tag,
+                       MPI_Comm comm, MPI_Info info, MPI_Request *request)
+
+        > This operation can only match with partitioned communication
+          initialization operations, therefore the MPI library is required to
+          match MPI_PRECV_INIT calls only with a corresponding MPI_PSEND_INIT
+          call.
+
+        > Wildcards for source and tags are NOT allowed.
+
+        NOTE: partitions: number of paritions
+              info: The info argument is provided in order to support
+                    per-operation implementation-defined info keys. ???
+
+
+    int MPI_Pready(int partition, MPI_Request request)
+
+        It marks a parition to be ready for send.
+
+            partition: partition to mark ready for transfer
+
+        NOTE: happens on the send side only.
+
+        > It's a send-side call that indicates that a given partition is ready
+          to be transferred.
+
+        > After a call to MPI_START/ MPI_STARTALL, all partitions associated
+          with that operation are inactive. A call to MPI_PREADY marks the
+          indicated partition as active. Calling MPI_PREADY on an active
+          partition is erroneous.
+
+
+    int MPI_Pready_range(int partition_low, int partition_high,
+                         MPI_Request request)
+
+        partition_low: lowest partition ready for transfer
+        partition_high: highest partition ready for transfer
+
+
+    int MPI_Pready_list(int length, const int array_of_partitions[],
+                        MPI_Request request)
+
+        length: list length
+        array_of_partitions: array of partitions
+
+
+COMM COMPLETION
+
+    > The functions MPI_WAIT and MPI_TEST (and variants) are used to complete a
+      partitioned communication operation. The completion of a partitioned send
+      operation indicates that the sender is now free to call
+      MPI_START/MPI_STARTALL to restart the operation and subsequently
+      MPI_PREADY, MPI_PREADY_RANGE or MPI_PREADY_LIST.
+
+    > The completion of a partitioned receive operation through MPI_WAIT or
+      MPI_TEST indicates that the receive buffer contains all of the
+      partitions. A function for probing the partial reception of the receive
+      buffer is provided by MPI_PARRIVED.
+
+
+    int MPI_Parrived(MPI_Request request, int partition, int *flag)
+
+        partition: partition to be tested
+        flag: true if operation completed on the specified partition, false if
+              not
+
+        > The request is not marked as complete/inactive by this procedure. A
+          subsequent call to an MPI completing procedure (e.g., MPI_TEST/
+          MPI_WAIT) is required to complete the operation.
+
+        > MPI_PARRIVED may be called multiple times for a partition.
+          MPI_PARRIVED may be called with a null or inactive request argument.
+          In either case, the operation returns with flag = true. Calling
+          MPI_PARRIVED on a request that does not correspond to a partitioned
+          receive operation is erroneous.
+
+
+-------------------------------------------------------------------------------
+
+SUMMARY (AI)
+
+| Feature                     | Persistent communication    | Partitioned communication                          |
+| --------------------------- | --------------------------- | ---------------------------------------------------|
+| Main goal                   | Reuse communication setup   | Reuse setup and expose data in parts               |
+| Message readiness           | Whole buffer is ready       | Partitions become ready independently              |
+| Completion                  | Start, then wait/test       | Start, Pready/Parrived partitions, then wait/test  |
+| Partial progress visibility | No                          | Yes                                                |
+| Best for                    | Repeated same communication | Incremental or multi-thread-produced data          |

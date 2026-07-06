@@ -1,0 +1,4 @@
+Demonstration of partitioned communication
+
+This program is the same as the mpi_partitioned0, except that we check for
+completion of each partition via parrived, on the receive side.
