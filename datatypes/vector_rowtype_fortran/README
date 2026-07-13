@@ -1,0 +1,8 @@
+Demonstration of passing non-contiguous rows of numbers (fortran)
+
+In this example an entire row is passed via a description of a row in a
+column-major fotran array. This is done using vector type constructor.
+
+NOTE:
+    This is how to send the third row: array(3,1)
+

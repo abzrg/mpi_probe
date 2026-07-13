@@ -1,0 +1,11 @@
+Demonstration of indexed derived type
+
+With this type, one can specify heterogenous data layout of various
+displacements and block lengths.
+
+This particular example is one practical example for this kind of layout
+specification. Matrix entries on the upper triangle part are not contiguous and
+they can be described using a single pair of displacement and block length nor
+with a single description of vector (count, blocklength, stride). each row has
+a different displacement and blocklength. Therefore we need one such pair per
+row.

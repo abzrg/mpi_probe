@@ -1,0 +1,8 @@
+Demonstration of non-contiguous data transfer using vector
+
+In this example, we pass a column of data from a row-major c array. Using a
+vector type we can describe the non-contiguous layout to MPI so it can pass an
+entire column (or more columns) of message(s).
+
+NOTE:
+    to specify the start of a certain column: &array[0][2] -> second column

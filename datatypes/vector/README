@@ -1,0 +1,40 @@
+Demonstration of vector derived datatype
+
+MPI_Type_vector creates a new type of equally spaced identicall blocks.
+
+It's useful when you want to send data that isn't contiguous, like a column of
+a 2D array, or every Nth element, which is "regularly spaced".
+
+
+    int MPI_Type_vector(
+        int count,          // number of blocks
+        int blocklength,    // number of elements in each block
+        int stride,         // displacement between the blocks
+        MPI_Datatype oldtype,
+        MPI_Datatype *newtype // the new data type (has to be committed)
+    );
+
+Remember to call
+
+    MPI_Type_commit(&newtype);
+  before using it, and
+    MPI_Type_free(&newtype)
+  when done.
+
+
+Example:
+
+    MPI_Type_vector(3, 2, 3, oldtype, newtype);
+
+    oldtype [x]
+
+                     blocklen=2
+                     <---->
+    newtype [x][x][ ][x][x][ ][x][x][ ]
+            <------->
+             stride=3
+
+    3 sets of (two-elements, skip 1)
+
+    i.e., start somewhere take 2 elements, hop three elements, take 2 elements,
+    hop three elements, take 2 elements.

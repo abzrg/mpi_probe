@@ -31,3 +31,7 @@ datatypes
     - predefined_datatypes
     - contiguous_ints
     - contiguous_struct
+    - vector
+    - vector_rowtype_fortran
+    - vector_columntype_c
+    - upper_triangular_matrix (indexed)
