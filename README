@@ -38,3 +38,5 @@ datatypes
     - hvector
     - indexed
     - hindexed
+    - indexed_block
+    - hindexed_block

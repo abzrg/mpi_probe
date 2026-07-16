@@ -1,0 +1,14 @@
+Demonstration of indexed_block derived datatype
+
+The same as indexed except that all blocks has the same block length.
+
+    int MPI_Type_create_indexed_block(
+        int count,
+        int blocklength,
+        const int array_of_displacements[],
+        MPI_Datatype oldtype,
+        MPI_Datatype *newtype
+    )
+
+    int bl = 3; // no. of elements of oldtype in each block
+    MPI_Type_create_indexed_block(count, bl, disparray, oldtype, &newtype);

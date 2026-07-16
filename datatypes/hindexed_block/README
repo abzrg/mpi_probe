@@ -1,0 +1,21 @@
+Demonstration of hindexed_block derived datatype
+
+The same as indexed_block except that it takes bytes as displacement instead of
+number of elements.
+
+    Creates an indexed data type with the same block length for all blocks.
+
+    int MPI_Type_create_indexed_block(
+        int count,
+        int blocklength,
+        const int array_of_displacements[],
+        MPI_Datatype oldtype,
+        MPI_Datatype *newtype
+    )
+
+    ...
+
+    int bl = 3; // no. of elements of oldtype in each block
+    MPI_Aint disparray[2] = {0, 48}; // no. of bytes difference between
+                                     // start of each block
+    MPI_Type_create_hindexed_block(count, bl, disparray, oldtype, &newtype);
