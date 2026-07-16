@@ -1,0 +1,8 @@
+Demonstration of hvector derived datatype
+
+hvector is the same as vector except that it takes stride in bytes rather than
+counts, i.e., stride is the number of bytes between start of each block. It can
+be calculated as blocklength times extent.
+
+    int MPI_Type_create_hvector(int count, int blocklength, MPI_Aint stride,
+                                MPI_Datatype oldtype, MPI_Datatype *newtype)
