@@ -41,3 +41,4 @@ datatypes
     - indexed_block
     - hindexed_block
     - struct
+    - subarray

@@ -1,0 +1,37 @@
+Demonstration of subarray derived datatype
+
+
+The subarray type constructor creates an MPI data type describing an
+n-dimensional subarray of an n-dimensional array. The subarray may be situated
+anywhere within the full array, and may be of any nonzero size up to the size
+of the larger array as long as it is confined within this array. This type
+constructor facilitates creating file types to access arrays distributed in
+blocks among processes to a single file that contains the global array.
+
+This type constructor can handle arrays with an arbitrary number of dimensions
+and works for both C- and Fortran-ordered matrices (that is, row-major or
+column-major). Note that a C program may use Fortran order and a Fortran
+program may use C order.
+
+    int MPI_Type_create_subarray(
+        int ndims,
+        const int array_of_sizes[],
+        const int array_of_subsizes[],
+        const int array_of_starts[],
+        int order,
+        MPI_Datatype oldtype,
+        MPI_Datatype *newtype
+    )
+
+
+        - ndims: Number of array dimensions (positive integer).
+        - array_of_sizes: Number of elements of type oldtype in each dimension
+          of the full array (array of positive integers).
+        - array_of_subsizes: Number of elements of type oldtype in each
+          dimension of the subarray (array of positive integers).
+        - array_of_starts: Starting coordinates of the subarray in each
+          dimension (array of nonnegative integers).
+        - order: Array storage order flag (state). MPI_ORDER_C (row-major),
+          MPI_ORDER_FORTRAN (column-major)
+        - oldtype: Array element data type (handle).
+        - newtype: New data type (handle).
