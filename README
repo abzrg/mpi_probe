@@ -36,3 +36,5 @@ datatypes
     - vector_columntype_c
     - upper_triangular_matrix (indexed)
     - hvector
+    - indexed
+    - hindexed

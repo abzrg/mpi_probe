@@ -1,0 +1,20 @@
+Demonstration of indexed derived datatype
+
+Indexed allows replication of an old datatype into a sequence of blocks, where
+each block can contain a different number of copies and have a different
+displacement. All block displacements are multiple of the old data type's
+extent.
+
+    int MPI_Type_indexed(int count, const int array_of_blocklengths[],
+                         const int array_of_displacements[],
+                         MPI_Datatype oldtype, MPI_Datatype *newtype)
+
+       - count: Number of blocks — also number of entries in
+         array_of_displacements and array_of_blocklengths (nonnegative
+         integer).
+       - array_of_blocklengths: Number of elements per block (array of
+         nonnegative integers).
+       - array_of_displacements: Displacement for each block, in multiples of
+         oldtype extent
+       - oldtype: Old datatype (handle).
+       - newtype: New datatype (handle).

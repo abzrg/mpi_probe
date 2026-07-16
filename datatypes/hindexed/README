@@ -1,0 +1,15 @@
+Demonstration of hindexed derived datatype
+
+The same as indexed except that it uses number of bytes instead of number of
+elements for displacement array.
+
+    int MPI_Type_create_hindexed(int count, int *array_of_blocklengths,
+                                 MPI_Aint *array_of_displacements,
+                                 MPI_Datatype oldtype, MPI_Datatype *newtype)
+
+Also, note that the function call is named slightly differently and
+displacement array is not of type int but MPI_Aint.
+
+    MPI_Aint disparray[2] = {0, 48}; // no. of bytes difference between
+                                     // start of each block
+    MPI_Type_create_hindexed(count, blarray, disparray, oldtype, &newtype);
