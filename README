@@ -40,3 +40,4 @@ datatypes
     - hindexed
     - indexed_block
     - hindexed_block
+    - struct

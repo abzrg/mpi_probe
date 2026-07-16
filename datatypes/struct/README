@@ -1,0 +1,29 @@
+Demonstration of struct derived datatype
+
+MPI_Type_create_struct is the most general type constructor. It further
+generalizes MPI_Type_create_hindexed in that it allows each block to consist of
+replications of different datatypes.
+
+      int MPI_Type_create_struct(
+          int count,
+          int array_of_blocklengths[],
+          const MPI_Aint array_of_displacements[],
+          const MPI_Datatype array_of_types[],
+          MPI_Datatype *newtype
+      )
+
+           - count: Number of blocks (integer) — also number of entries in
+             arrays array_of_types, array_of_displacements, and
+             array_of_blocklengths.
+           - array_of_blocklengths: Number of elements in each block (array of
+             integers).
+           - array_of_displacements: Byte displacement of each block (array of
+             integers).
+           - array_of_types: Type of elements in each block (array of handles
+             to data-type objects).
+           - newtype: New data type (handle).
+
+
+MPI_Type_create_struct creates a structured data type.
+
+    !!! This routine replaces MPI_Type_struct, which is now deprecated.
